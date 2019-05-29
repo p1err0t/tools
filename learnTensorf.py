@@ -110,7 +110,9 @@ class learnTf:
 
         # 2定义损失函数及反向传播方法
         loss = tf.reduce_mean(tf.square(y-y_))
-        train_step = tf.train.GradientDescentOptimizer(0.001).minimize(loss)
+        # train_step = tf.train.GradientDescentOptimizer(0.001).minimize(loss)
+        # train_step = tf.train.MomentumOptimizer(0.001, 0.9).minimize(loss)
+        train_step = tf.train.AdamOptimizer(0.001).minimize(loss)
 
         # 3生成会话，训练STEPS轮
         with tf.Session() as sess:
@@ -121,12 +123,12 @@ class learnTf:
             print("\n")
 
             #训练模型
-            STEPS = 3000
+            STEPS = 5000
             for i in range(STEPS):
                 start = (i*BATCH_SIZE) % 32
                 end = start + BATCH_SIZE
                 sess.run(train_step, feed_dict={x: X[start:end], y_: Y[start:end]})
-                if i % 500 ==0:
+                if i % 500 == 0:
                     total_loss = sess.run(loss, feed_dict={x: X, y_: Y})
                     print("After %d training step(s), loss on all data is %g" %(i, total_loss))
             print("\n")
