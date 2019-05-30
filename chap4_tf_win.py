@@ -7,6 +7,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 '''
 import tensorflow as tf
 import numpy as np
+import matplotlib.pyplot as plt
 
 #开启动态图
 #tf.enable_eager_execution()
@@ -91,6 +92,104 @@ class FunChap4:
             sess.run(ema_op)
             print(sess.run([w1, ema.average(w1)]))
 
+    @staticmethod
+    def get_weight(shape, regularizer):
+        w = tf.Variable(tf.random_normal(shape), dtype = tf.float32)
+        tf.add_to_collection('losses', tf.contrib.layers.l2_regularizer(regularizer)(w))
+        return w
+    @staticmethod
+    def get_bias(shape):
+        b = tf.Variable(tf.constant(0.01, shape = shape))
+        return b
 
 
-FunChap4.func4_3()
+    @classmethod
+    def func4_4(self):
+        BATCH_SIZE = 30
+        seed = 2
+        rdm = np.random.RandomState(seed)
+        #randn标准正态分布
+        X = rdm.randn(300, 2)
+        Y_ = [int(x0*x0 + x1*x1 < 2) for(x0, x1) in X]
+        Y_c = [['red' if y else 'blue'] for y in Y_]
+        #Y_c = ['red' if y else 'blue' for y in Y_]
+        # 把X整理为n行2列，Y_整理为n行1列
+        X1 = np.vstack(X).reshape(-1, 2)
+        Y_1 = np.vstack(Y_).reshape(-1, 1)
+        print(X)
+        print(Y_)
+        print(Y_c)
+        plt.scatter(X[:,0],X[:,1], c=np.squeeze(Y_c))
+        plt.show()
+
+        x = tf.placeholder(tf.float32, shape=[None,2])
+        y_ = tf.placeholder(tf.float32, shape=[None,1])
+
+        w1 = self.get_weight([2,11], 0.01)
+        b1 = self.get_bias([11])
+        y1 = tf.nn.relu(tf.matmul(x,w1)+b1)
+
+        w2 = self.get_weight([11,1], 0.01)
+        b2 = self.get_bias([1])
+        y = tf.matmul(y1, w2) + b2
+
+        loss_mse = tf.reduce_mean(tf.square(y-y_))
+        loss_total = loss_mse + tf.add_n(tf.get_collection('losses'))
+
+        train_step = tf.train.AdamOptimizer(0.0001).minimize(loss_mse)
+        with tf.Session() as sess:
+            init_op = tf.global_variables_initializer()
+            sess.run(init_op)
+            STEPS = 40000
+            for i in range(STEPS):
+                start = (i*BATCH_SIZE) % 300
+                end = start + BATCH_SIZE
+                sess.run(train_step, feed_dict={x:X[start:end],y_:Y_[start:end]})
+                if i % 2000 == 0:
+                    loss_mse_v = sess.run(loss_mse, feed_dict={x:X,y_:Y_})
+                    print('After %d steps,loss is %f.'%(i,loss_mse_v))
+            xx,yy = np.mgrid[-3:3:.01, -3:3:.01]
+            grid = np.c_[xx.ravel(),yy.ravel()]
+            probs= sess.run(y, feed_dict={x:grid})
+            probs= probs.reshape(xx.shape)
+            print('w1:\n',sess.run(w1))
+            print('b1:\n',sess.run(b1))
+            print('w2:\n',sess.run(w2))
+            print('b2:\n',sess.run(b2))
+
+        plt.scatter(X[:,0],X[:,1], c=np.squeeze(Y_c))
+        plt.contour(xx,yy,probs,levels=[.5])
+        plt.show()
+
+        #包含正则化
+        train_step = tf.train.AdamOptimizer(0.0001).minimize(loss_total)
+        with tf.Session() as sess:
+            init_op = tf.global_variables_initializer()
+            sess.run(init_op)
+            STEPS = 40000
+            for i in range(STEPS):
+                start = (i*BATCH_SIZE)/300
+                end = start + BATCH_SIZE
+                sess.run(train_step, feed_dict={x:X[start:end],y_:Y_[start:end]})
+                if i % 2000 == 0:
+                    loss_mse_v = sess.run(loss_mse, feed_dict={x:X,y_:Y_})
+                    print('After %d steps,loss is %f.'%(i,loss_mse_v))
+            xx,yy = np.mgrid[-3:3:.01, -3:3:.01]
+            grid = np.c_[xx.ravel(),yy.ravel()]
+            probs= sess.run(y, feed_dict={x:grid})
+            probs= probs.reshape(xx.shape)
+            print('w1:\n',sess.run(w1))
+            print('b1:\n',sess.run(b1))
+            print('w2:\n',sess.run(w2))
+            print('b2:\n',sess.run(b2))
+
+        plt.scatter(X[:,0],X[:,1], c=np.squeeze(Y_c))
+        plt.contour(xx,yy,probs,levels=[.5])
+        plt.show()
+
+
+
+
+
+
+FunChap4.func4_4()
