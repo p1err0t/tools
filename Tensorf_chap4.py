@@ -112,8 +112,8 @@ class Tensor_f4:
             print("\n")
             print("Final w1 is:\n", sess.run(w1))
             # print("w2:\n", sess.run(w2))
-    @staticmethod
-    def func4_4():
+    @classmethod
+    def func4_4(self):
         w = tf.Variable(tf.constant(5,dtype=tf.float32))
         loss = tf.square(w+6)
         train_step = tf.train.GradientDescentOptimizer(0.2).minimize(loss)

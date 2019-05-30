@@ -114,8 +114,8 @@ class FunChap4:
         Y_c = [['red' if y else 'blue'] for y in Y_]
         #Y_c = ['red' if y else 'blue' for y in Y_]
         # 把X整理为n行2列，Y_整理为n行1列
-        X1 = np.vstack(X).reshape(-1, 2)
-        Y_1 = np.vstack(Y_).reshape(-1, 1)
+        X = np.vstack(X).reshape(-1, 2)
+        Y_ = np.vstack(Y_).reshape(-1, 1)
         print(X)
         print(Y_)
         print(Y_c)
