@@ -130,13 +130,10 @@ class learnTf:
                 sess.run(train_step, feed_dict={x: X[start:end], y_: Y[start:end]})
                 if i % 500 == 0:
                     total_loss = sess.run(loss, feed_dict={x: X, y_: Y})
-                    print("After %d training step(s), loss on all data is %g" %(i, total_loss))
+                    print("After %d training step(s), loss on all data is %g" % (i, total_loss))
             print("\n")
             print("w1:\n", sess.run(w1))
             print("w2:\n", sess.run(w2))
-
-
-
 
 
 
