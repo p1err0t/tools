@@ -168,7 +168,7 @@ class FunChap4:
             sess.run(init_op)
             STEPS = 40000
             for i in range(STEPS):
-                start = (i*BATCH_SIZE)/300
+                start = (i*BATCH_SIZE)%300
                 end = start + BATCH_SIZE
                 sess.run(train_step, feed_dict={x:X[start:end],y_:Y_[start:end]})
                 if i % 2000 == 0:
