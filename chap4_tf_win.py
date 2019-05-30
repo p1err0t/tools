@@ -24,6 +24,7 @@ class FunChap4:
                 w_val = sess.run(w)
                 loss_val = sess.run(loss)
                 print("After %s steps: w is %f, loss is %f." % (i, w_val,loss_val))
+
     @staticmethod
     def func4_2():
         LEARNING_RATE_BASE = 0.1 #初始学习率
