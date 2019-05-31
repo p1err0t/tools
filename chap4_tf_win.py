@@ -122,8 +122,8 @@ class FunChap4:
         plt.scatter(X[:,0],X[:,1], c=np.squeeze(Y_c))
         plt.show()
 
-        x = tf.placeholder(tf.float32, shape=[None,2])
-        y_ = tf.placeholder(tf.float32, shape=[None,1])
+        x = tf.placeholder(tf.float32, shape=(None, 2))
+        y_ = tf.placeholder(tf.float32, shape=(None, 1))
 
         w1 = self.get_weight([2,11], 0.01)
         b1 = self.get_bias([11])
@@ -150,8 +150,8 @@ class FunChap4:
                     print('After %d steps,loss is %f.'%(i,loss_mse_v))
             xx,yy = np.mgrid[-3:3:.01, -3:3:.01]
             grid = np.c_[xx.ravel(),yy.ravel()]
-            probs= sess.run(y, feed_dict={x:grid})
-            probs= probs.reshape(xx.shape)
+            probs = sess.run(y, feed_dict={x:grid})
+            probs = probs.reshape(xx.shape)
             print('w1:\n',sess.run(w1))
             print('b1:\n',sess.run(b1))
             print('w2:\n',sess.run(w2))
